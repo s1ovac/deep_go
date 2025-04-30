@@ -80,7 +80,7 @@ func WithType(personType int) func(*GamePerson) {
 	if personType != BuilderGamePersonType && personType != BlacksmithGamePersonType && personType != WarriorGamePersonType {
 		panic("invalid person type")
 	}
-	
+
 	return func(person *GamePerson) {
 		person.personType = uint8(personType)
 	}
@@ -120,76 +120,61 @@ func NewGamePerson(options ...Option) GamePerson {
 }
 
 func (p *GamePerson) Name() string {
-	// need to implement
 	return p.name
 }
 
 func (p *GamePerson) X() int {
-	// need to implement
 	return int(p.x)
 }
 
 func (p *GamePerson) Y() int {
-	// need to implement
 	return int(p.y)
 }
 
 func (p *GamePerson) Z() int {
-	// need to implement
 	return int(p.z)
 }
 
 func (p *GamePerson) Gold() int {
-	// need to implement
 	return int(p.gold)
 }
 
 func (p *GamePerson) Mana() int {
-	// need to implement
 	return int(p.mana)
 }
 
 func (p *GamePerson) Health() int {
-	// need to implement
 	return int(p.health)
 }
 
 func (p *GamePerson) Respect() int {
-	// need to implement
 	return int(p.respect)
 }
 
 func (p *GamePerson) Strength() int {
-	// need to implement
 	return int(p.strength)
 }
 
 func (p *GamePerson) Experience() int {
-	// need to implement
 	return int(p.experience)
 }
 
 func (p *GamePerson) Level() int {
-	// need to implement
 	return int(p.level)
 }
 
 func (p *GamePerson) HasHouse() bool {
-	// need to implement
 	return p.hasHouse
 }
 
 func (p *GamePerson) HasGun() bool {
-	// need to implement
 	return p.hasGun
 }
 
 func (p *GamePerson) HasFamilty() bool {
-	// need to implement
 	return p.hasFamily
 }
 
 func (p *GamePerson) Type() int {
-	// need to implement
 	return int(p.personType)
 }
