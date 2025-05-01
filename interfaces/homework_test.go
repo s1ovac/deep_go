@@ -6,9 +6,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type SingletonService struct {
+	NotEmptyStruct bool
+}
+
 type UserService struct {
 	NotEmptyStruct bool
 }
+
 type MessageService struct {
 	NotEmptyStruct bool
 }
@@ -20,6 +25,9 @@ func TestDIContainer(t *testing.T) {
 	})
 	container.RegisterType("MessageService", func() interface{} {
 		return &MessageService{}
+	})
+	container.RegisterSingletonType("SingletonService", func() any {
+		return &SingletonService{}
 	})
 
 	userService1, err := container.Resolve("UserService")
@@ -38,4 +46,13 @@ func TestDIContainer(t *testing.T) {
 	paymentService, err := container.Resolve("PaymentService")
 	assert.Error(t, err)
 	assert.Nil(t, paymentService)
+
+	singletonService1, err := container.Resolve("SingletonService")
+	assert.NoError(t, err)
+	singletonService2, err := container.Resolve("SingletonService")
+	assert.NoError(t, err)
+
+	s1 := singletonService1.(*SingletonService)
+	s2 := singletonService2.(*SingletonService)
+	assert.True(t, s1 == s2)
 }

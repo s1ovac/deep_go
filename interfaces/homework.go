@@ -31,5 +31,23 @@ func (c *Container) Resolve(name string) (interface{}, error) {
 		return nil, fmt.Errorf("%w, with name: %s", errNotFound, name)
 	}
 
-	return constructor, nil
+	switch fn := constructor.(type) {
+	case func() any:
+		return fn(), nil
+	default:
+		return constructor, nil
+	}
+}
+
+func (c *Container) RegisterSingletonType(name string, constructor any) {
+	if _, ok := c.types[name]; ok {
+		return
+	}
+
+	fn, ok := constructor.(func() any)
+	if !ok {
+		return
+	}
+
+	c.types[name] = fn()
 }
