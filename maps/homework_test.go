@@ -8,7 +8,7 @@ import (
 )
 
 func TestCircularQueue(t *testing.T) {
-	data := NewOrderedMap[int]()
+	data := NewOrderedMap[int, int]()
 	assert.Zero(t, data.Size())
 
 	data.Insert(10, 10)
