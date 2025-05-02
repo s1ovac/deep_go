@@ -16,6 +16,8 @@ func TestMultiError(t *testing.T) {
 
 	expectedMessage := "2 errors occured:\n\t* error 1\t* error 2\n"
 	assert.EqualError(t, err, expectedMessage)
+	var multErr *MultiError
+	assert.True(t, errors.As(err, &multErr))
 
 	expectedMessage = "3 errors occured:\n\t* error 1\t* error 2\t* not found\n"
 	err = Append(err, errNotFound)
