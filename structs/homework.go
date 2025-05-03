@@ -4,7 +4,6 @@ type Option func(*GamePerson)
 
 func WithName(name string) func(*GamePerson) {
 	return func(person *GamePerson) {
-		person.name = name
 	}
 }
 
@@ -30,49 +29,49 @@ func WithMana(mana int) func(*GamePerson) {
 
 func WithHealth(health int) func(*GamePerson) {
 	return func(person *GamePerson) {
-		person.health = uint16(health)
+
 	}
 }
 
 func WithRespect(respect int) func(*GamePerson) {
 	return func(person *GamePerson) {
-		person.respect = uint8(respect)
+
 	}
 }
 
 func WithStrength(strength int) func(*GamePerson) {
 	return func(person *GamePerson) {
-		person.strength = uint8(strength)
+
 	}
 }
 
 func WithExperience(experience int) func(*GamePerson) {
 	return func(person *GamePerson) {
-		person.experience = uint8(experience)
+
 	}
 }
 
 func WithLevel(level int) func(*GamePerson) {
 	return func(person *GamePerson) {
-		person.level = uint8(level)
+
 	}
 }
 
 func WithHouse() func(*GamePerson) {
 	return func(person *GamePerson) {
-		person.hasHouse = true
+
 	}
 }
 
 func WithGun() func(*GamePerson) {
 	return func(person *GamePerson) {
-		person.hasGun = true
+
 	}
 }
 
 func WithFamily() func(*GamePerson) {
 	return func(person *GamePerson) {
-		person.hasFamily = true
+
 	}
 }
 
@@ -82,7 +81,6 @@ func WithType(personType int) func(*GamePerson) {
 	}
 
 	return func(person *GamePerson) {
-		person.personType = uint8(personType)
 	}
 }
 
@@ -93,21 +91,24 @@ const (
 )
 
 type GamePerson struct {
-	name       string
-	x          int32
-	y          int32
-	z          int32
-	gold       uint32
-	mana       uint16
-	health     uint16
-	respect    uint8
-	strength   uint8
-	experience uint8
-	level      uint8
-	personType uint8
-	hasHouse   bool
-	hasFamily  bool
-	hasGun     bool
+	// [-2,147,483,648, 2,147,483,647]
+	x    int32
+	y    int32
+	z    int32
+	gold uint32
+	mana uint16
+	name [42]byte
+	// [1-4] bits - respect
+	// [5-8] bits - strength
+	respStr byte
+	// [1-4] bits - experience
+	// [5-8] bits - level
+	expLvl byte
+	// [1-2] bits - personType (строитель/кузнец/воин) 0,01,10
+	// [3] bit - has house
+	// [4] bit - has gun
+	// [5] bit - has family
+	enumsVars byte
 }
 
 func NewGamePerson(options ...Option) GamePerson {
@@ -120,7 +121,7 @@ func NewGamePerson(options ...Option) GamePerson {
 }
 
 func (p *GamePerson) Name() string {
-	return p.name
+	return ""
 }
 
 func (p *GamePerson) X() int {
@@ -144,37 +145,37 @@ func (p *GamePerson) Mana() int {
 }
 
 func (p *GamePerson) Health() int {
-	return int(p.health)
+	return 0
 }
 
 func (p *GamePerson) Respect() int {
-	return int(p.respect)
+	return 0
 }
 
 func (p *GamePerson) Strength() int {
-	return int(p.strength)
+	return 0
 }
 
 func (p *GamePerson) Experience() int {
-	return int(p.experience)
+	return 0
 }
 
 func (p *GamePerson) Level() int {
-	return int(p.level)
+	return 0
 }
 
 func (p *GamePerson) HasHouse() bool {
-	return p.hasHouse
+	return true
 }
 
 func (p *GamePerson) HasGun() bool {
-	return p.hasGun
+	return true
 }
 
 func (p *GamePerson) HasFamilty() bool {
-	return p.hasFamily
+	return true
 }
 
 func (p *GamePerson) Type() int {
-	return int(p.personType)
+	return 0
 }
