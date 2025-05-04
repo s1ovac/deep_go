@@ -1,9 +1,20 @@
 package main
 
+import (
+	"unsafe"
+)
+
 type Option func(*GamePerson)
 
 func WithName(name string) func(*GamePerson) {
 	return func(person *GamePerson) {
+		if len(name) > maxPersonName {
+			return
+		}
+
+		for i, char := range unsafe.Slice(unsafe.StringData(name), len(name)) {
+			person.name[i] = char
+		}
 	}
 }
 
@@ -35,52 +46,53 @@ func WithHealth(health int) func(*GamePerson) {
 
 func WithRespect(respect int) func(*GamePerson) {
 	return func(person *GamePerson) {
-
+		person.respStr |= byte(respect)
 	}
 }
 
 func WithStrength(strength int) func(*GamePerson) {
 	return func(person *GamePerson) {
-
+		person.respStr |= byte(strength) << 4
 	}
 }
 
 func WithExperience(experience int) func(*GamePerson) {
 	return func(person *GamePerson) {
-
+		person.expLvl |= byte(experience)
 	}
 }
 
 func WithLevel(level int) func(*GamePerson) {
 	return func(person *GamePerson) {
-
+		person.expLvl |= byte(level) << 4
 	}
 }
 
 func WithHouse() func(*GamePerson) {
 	return func(person *GamePerson) {
-
+		person.enumsVars |= 1 << 2
 	}
 }
 
 func WithGun() func(*GamePerson) {
 	return func(person *GamePerson) {
-
+		person.enumsVars |= 1 << 3
 	}
 }
 
 func WithFamily() func(*GamePerson) {
 	return func(person *GamePerson) {
-
+		person.enumsVars |= 1 << 4
 	}
 }
 
 func WithType(personType int) func(*GamePerson) {
 	if personType != BuilderGamePersonType && personType != BlacksmithGamePersonType && personType != WarriorGamePersonType {
-		panic("invalid person type")
+		return nil
 	}
 
 	return func(person *GamePerson) {
+		person.enumsVars |= byte(personType)
 	}
 }
 
@@ -90,6 +102,8 @@ const (
 	WarriorGamePersonType
 )
 
+const maxPersonName = 42
+
 type GamePerson struct {
 	// [-2,147,483,648, 2,147,483,647]
 	x    int32
@@ -97,18 +111,18 @@ type GamePerson struct {
 	z    int32
 	gold uint32
 	mana uint16
-	name [42]byte
+	name [maxPersonName]byte
 	// [1-4] bits - respect
 	// [5-8] bits - strength
 	respStr byte
 	// [1-4] bits - experience
 	// [5-8] bits - level
 	expLvl byte
-	// [1-2] bits - personType (строитель/кузнец/воин) 0,01,10
+	// [1-2] bits - personType (строитель/кузнец/воин)
 	// [3] bit - has house
 	// [4] bit - has gun
 	// [5] bit - has family
-	enumsVars byte
+	enumsVars byte // 00011110
 }
 
 func NewGamePerson(options ...Option) GamePerson {
@@ -121,6 +135,16 @@ func NewGamePerson(options ...Option) GamePerson {
 }
 
 func (p *GamePerson) Name() string {
+	for i, char := range p.name {
+		if char == 0 {
+			return unsafe.String(unsafe.SliceData(p.name[:i]), i+1)
+		}
+
+		if i == len(p.name)-1 {
+			return unsafe.String(unsafe.SliceData(p.name[:i]), i+1)
+		}
+	}
+
 	return ""
 }
 
@@ -149,33 +173,33 @@ func (p *GamePerson) Health() int {
 }
 
 func (p *GamePerson) Respect() int {
-	return 0
+	return int(p.respStr << 4 >> 4)
 }
 
 func (p *GamePerson) Strength() int {
-	return 0
+	return int(p.respStr >> 4)
 }
 
 func (p *GamePerson) Experience() int {
-	return 0
+	return int(p.expLvl << 4 >> 4)
 }
 
 func (p *GamePerson) Level() int {
-	return 0
+	return int(p.expLvl >> 4)
 }
 
 func (p *GamePerson) HasHouse() bool {
-	return true
+	return p.enumsVars>>2&1 == 1
 }
 
 func (p *GamePerson) HasGun() bool {
-	return true
+	return p.enumsVars>>3&1 == 1
 }
 
-func (p *GamePerson) HasFamilty() bool {
-	return true
+func (p *GamePerson) HasFamily() bool {
+	return p.enumsVars>>4&1 == 1
 }
 
 func (p *GamePerson) Type() int {
-	return 0
+	return int(p.enumsVars << 6 >> 6)
 }

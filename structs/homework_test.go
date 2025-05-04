@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 	"testing"
 	"unsafe"
@@ -10,7 +9,6 @@ import (
 )
 
 func TestGamePerson(t *testing.T) {
-	fmt.Println(unsafe.Sizeof(GamePerson{}))
 	assert.LessOrEqual(t, unsafe.Sizeof(GamePerson{}), uintptr(64))
 
 	const x, y, z = math.MinInt32, math.MaxInt32, 0
@@ -52,7 +50,7 @@ func TestGamePerson(t *testing.T) {
 	assert.Equal(t, experience, person.Experience())
 	assert.Equal(t, level, person.Level())
 	assert.True(t, person.HasHouse())
-	assert.True(t, person.HasFamilty())
+	assert.True(t, person.HasFamily())
 	assert.False(t, person.HasGun())
 	assert.Equal(t, personType, person.Type())
 }
