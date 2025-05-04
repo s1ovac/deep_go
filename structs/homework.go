@@ -34,13 +34,14 @@ func WithGold(gold int) func(*GamePerson) {
 
 func WithMana(mana int) func(*GamePerson) {
 	return func(person *GamePerson) {
-		person.mana = uint16(mana)
+		person.mana |= uint16(mana)
 	}
 }
 
 func WithHealth(health int) func(*GamePerson) {
 	return func(person *GamePerson) {
-
+		person.healthPart = byte(health)
+		person.enumsVars |= byte(health >> 8 << 5)
 	}
 }
 
@@ -105,11 +106,12 @@ const (
 const maxPersonName = 42
 
 type GamePerson struct {
-	// [-2,147,483,648, 2,147,483,647]
 	x    int32
 	y    int32
 	z    int32
 	gold uint32
+	// [1-10] bits - mana
+	// [11-16] bits - health
 	mana uint16
 	name [maxPersonName]byte
 	// [1-4] bits - respect
@@ -122,7 +124,10 @@ type GamePerson struct {
 	// [3] bit - has house
 	// [4] bit - has gun
 	// [5] bit - has family
-	enumsVars byte // 00011110
+	// [6-7] - health part
+	// [8] - empty
+	enumsVars  byte
+	healthPart byte
 }
 
 func NewGamePerson(options ...Option) GamePerson {
@@ -169,7 +174,10 @@ func (p *GamePerson) Mana() int {
 }
 
 func (p *GamePerson) Health() int {
-	return 0
+	health := int(p.healthPart)
+	health += int(p.enumsVars>>5) << 8
+
+	return health
 }
 
 func (p *GamePerson) Respect() int {
