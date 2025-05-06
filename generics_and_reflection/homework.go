@@ -27,14 +27,15 @@ func Serialize(person Person) string {
 	val := reflect.ValueOf(person)
 
 	for i := 0; i < typ.NumField(); i++ {
+		value := val.Field(i)
 		property, omit := parsePropertiesTag(typ.Field(i))
-		if omit && checkFieldZeroValue(val.Field(i)) {
+		if omit && checkFieldZeroValue(value) {
 			continue
 		}
 
 		strBuild.WriteString(property)
 		strBuild.WriteString("=")
-		strBuild.WriteString(parseValueToString(val.Field(i)))
+		strBuild.WriteString(parseValueToString(value))
 		if i != typ.NumField()-1 {
 			strBuild.WriteString("\n")
 		}
